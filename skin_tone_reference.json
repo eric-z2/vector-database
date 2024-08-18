@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Asian_Dark",
+        "rgb": "216, 184, 159"
+    },
+    {
+        "name": "Asian_Light",
+        "rgb": "248, 224, 184"
+    },
+    {
+        "name": "Asian_Medium",
+        "rgb": "230, 198, 173"
+    },
+    {
+        "name": "Asian_Medium_Dark",
+        "rgb": "229, 202, 181"
+    },
+    {
+        "name": "Asian_Medium_Light",
+        "rgb": "248, 201, 175"
+    },
+    {
+        "name": "Black_Dark",
+        "rgb": "33, 1, 2"
+    },
+    {
+        "name": "Black_Light",
+        "rgb": "237, 207, 197"
+    },
+    {
+        "name": "Black_Medium",
+        "rgb": "162, 116, 101"
+    },
+    {
+        "name": "Black_Medium_Dark",
+        "rgb": "144, 110, 99"
+    },
+    {
+        "name": "Black_Medium_Light",
+        "rgb": "193, 144, 129"
+    },
+    {
+        "name": "Caucasian_Dark",
+        "rgb": "177, 140, 122"
+    },
+    {
+        "name": "Caucasian_Light",
+        "rgb": "231, 215, 215"
+    },
+    {
+        "name": "Caucasian_Medium",
+        "rgb": "216, 188, 167"
+    },
+    {
+        "name": "Caucasian_Medium_Dark",
+        "rgb": "201, 165, 141"
+    },
+    {
+        "name": "Caucasian_Medium_Light",
+        "rgb": "237, 207, 197"
+    },
+    {
+        "name": "Latino_Dark",
+        "rgb": "109, 95, 84"
+    },
+    {
+        "name": "Latino_Light",
+        "rgb": "230, 198, 173"
+    },
+    {
+        "name": "Latino_Medium",
+        "rgb": "186, 145, 117"
+    },
+    {
+        "name": "Latino_Medium_Dark",
+        "rgb": "156, 123, 104"
+    },
+    {
+        "name": "Latino_Medium_Light",
+        "rgb": "201, 160, 132"
+    }
+]

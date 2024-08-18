@@ -1,7 +1,7 @@
 from pymilvus import AnnSearchRequest, connections, Collection, CollectionSchema, DataType, FieldSchema, model, RRFRanker, utility, WeightedRanker
 from pymilvus.model.hybrid import BGEM3EmbeddingFunction
 from fastapi import FastAPI
-import uvicorn, json
+import ast, json, uvicorn
 
 # Connect to server
 connections.connect(
@@ -56,22 +56,37 @@ bge_m3_ef = BGEM3EmbeddingFunction(
 
 @app.get("/insert")
 async def create_item(item: dict):
-    json_object = json.dumps(item["landmarks"], indent=4)
-    with open("documents.json", "w") as outfile:
-        outfile.write(json_object)
 
-    with open('documents.json', 'r') as f:
+    # Load skin tone colours
+    with open('/home/intern2024/database/skin_tone_reference.json', 'r') as f:
         data = json.load(f)
 
-    docs = [doc['face'] for doc in data]
+    # Embedding values into database
+    docs = [doc['rgb'] for doc in data]
     docs_embeddings = bge_m3_ef.encode_documents(docs)
 
     entities = [docs, docs_embeddings["dense"], docs_embeddings["sparse"]]
     collection.insert(entities)
     collection.flush()
 
-    # Temporary vectors
-    queries = ["1234"]
+    # Writes and reads skin tones of parts of the face
+    json_object = json.dumps(item["landmarks"], indent=4)
+    with open('/home/intern2024/database/skin_tone_colour.json', 'w') as outfile:
+        outfile.write(json_object)
+
+    with open('/home/intern2024/database/skin_tone_colour.json', 'r') as f:
+        query_data = json.load(f)
+
+    q = query_data[0]
+    first_rgb_value = (q["face"][0] + q["forehead"][0] + q["left_cheek"][0] + q["right_cheek"][0] + q["nose"][0] + q["jaw"][0])/6
+    second_rgb_value = (q["face"][1] + q["forehead"][1] + q["left_cheek"][1] + q["right_cheek"][1] + q["nose"][1] + q["jaw"][1])/6
+    third_rgb_value = (q["face"][2] + q["forehead"][2] + q["left_cheek"][2] + q["right_cheek"][2] + q["nose"][2] + q["jaw"][2])/6
+    query_value = str(first_rgb_value) + ", " + str(second_rgb_value) + ", " + str(third_rgb_value)
+
+    print(query_value)
+
+    # Skin tone rgb values inserted into query
+    queries = [query_value]
 
     query_embeddings = bge_m3_ef.encode_queries(queries)
 
@@ -98,8 +113,6 @@ async def create_item(item: dict):
     # Store requests in a list
     reqs = [request_1, request_2]
 
-    # Weight the sparse and dense vectors evenly
-
     collection.load()
     result = collection.hybrid_search(
         reqs, 
@@ -108,9 +121,23 @@ async def create_item(item: dict):
         output_fields=["text"]
     )
 
-    print(result)
+    # Isolates for rgb value of the identified skin tone
+    data_string = result[0][0]
+    temp_str = str(data_string)
+    split = temp_str.split(", ")
+    connect = split[2] + ", " + split[3] + ", " + split[4]
+    connect_split = connect.split(": ")
+    temp2 = connect_split[2]
+    first_strip = temp2.rstrip('}')
+    second_strip = first_strip.strip("'")
 
-    return {"result":item["landmarks"],"message": "Text processed successfully"}
+    skin_tone = next(item["name"] for item in data if item["rgb"] == second_strip)
+    print("Skin tone: " + skin_tone)
+
+    with open('/home/intern2024/database/output.json', 'w') as outfile:
+        json.dump(skin_tone)
+
+    return skin_tone
 
 if __name__=="__main__":
     uvicorn.run(app)
