@@ -1,7 +1,7 @@
 from pymilvus import AnnSearchRequest, connections, Collection, CollectionSchema, DataType, FieldSchema, model, RRFRanker, utility, WeightedRanker
 from pymilvus.model.hybrid import BGEM3EmbeddingFunction
 from fastapi import FastAPI
-import ast, json, uvicorn
+import json, uvicorn
 
 # Connect to server
 connections.connect(
@@ -58,7 +58,7 @@ bge_m3_ef = BGEM3EmbeddingFunction(
 async def create_item(item: dict):
 
     # Load skin tone colours
-    with open('/home/intern2024/database/skin_tone_reference.json', 'r') as f:
+    with open('skin_tone_reference.json', 'r') as f:
         data = json.load(f)
 
     # Embedding values into database
@@ -71,10 +71,10 @@ async def create_item(item: dict):
 
     # Writes and reads skin tones of parts of the face
     json_object = json.dumps(item["landmarks"], indent=4)
-    with open('/home/intern2024/database/skin_tone_colour.json', 'w') as outfile:
+    with open('skin_tone_colour.json', 'w') as outfile:
         outfile.write(json_object)
 
-    with open('/home/intern2024/database/skin_tone_colour.json', 'r') as f:
+    with open('skin_tone_colour.json', 'r') as f:
         query_data = json.load(f)
 
     q = query_data[0]
@@ -134,8 +134,13 @@ async def create_item(item: dict):
     skin_tone = next(item["name"] for item in data if item["rgb"] == second_strip)
     print("Skin tone: " + skin_tone)
 
-    with open('/home/intern2024/database/output.json', 'w') as outfile:
-        json.dump(skin_tone)
+    dictionary_dump = {
+        "Skin Tone" : skin_tone,
+        "RGB value" : query_value
+    }
+    
+    with open('output.json', 'w') as outfile:
+        json.dump(dictionary_dump, outfile, indent=0)
 
     return skin_tone
 
